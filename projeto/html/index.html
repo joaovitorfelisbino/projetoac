@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172821">
+  <title>Estoque | Acougue do Bairro</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#inicio" aria-label="Açougue do Bairro, início"><span class="brand-mark">AB</span><span><strong>Açougue</strong><small>DO BAIRRO</small></span></a>
+    <p class="nav-label">MENU PRINCIPAL</p>
+    <nav><a class="nav-link active" href="#inicio"><span>▦</span> Visão geral</a><a class="nav-link" href="#estoque"><span>▤</span> Estoque</a><a class="nav-link" href="#movimentacoes"><span>↕</span> Movimentações</a></nav>
+    <div class="sidebar-bottom"><div class="side-tip"><span>✳</span><strong>Dica do dia</strong><p>Mantenha os produtos refrigerados entre 0°C e 4°C.</p></div><div class="user"><span class="avatar">AD</span><span><strong>Administrador</strong><small>Gerente da loja</small></span><span class="dots">•••</span></div></div>
+  </aside>
+  <main class="main" id="inicio">
+    <header class="topbar"><div><p class="eyebrow">SEGUNDA-FEIRA, 13 DE OUTUBRO DE 2026</p><h1>Controle de estoque</h1><p class="subtitle">Acompanhe seus produtos e movimentações.</p></div><button class="button button-primary" id="add-product"><span>＋</span> Novo produto</button></header>
+    <section class="stats" aria-label="Resumo do estoque">
+      <article class="stat-card"><div class="stat-heading"><span>Produtos cadastrados</span><span class="stat-icon green">▤</span></div><strong id="stat-products">0</strong><small>Itens diferentes no estoque</small></article>
+      <article class="stat-card"><div class="stat-heading"><span>Valor em estoque</span><span class="stat-icon yellow">R$</span></div><strong id="stat-value">R$ 0,00</strong><small>Estimativa pelo custo unitário</small></article>
+      <article class="stat-card"><div class="stat-heading"><span>Estoque baixo</span><span class="stat-icon red">!</span></div><strong id="stat-low">0</strong><small>Produtos no limite ou abaixo</small></article>
+      <article class="stat-card"><div class="stat-heading"><span>Vencem em 7 dias</span><span class="stat-icon blue">◷</span></div><strong id="stat-expiring">0</strong><small>Confira as datas de validade</small></article>
+    </section>
+    <section class="content-card" id="estoque">
+      <div class="section-head"><div><h2>Produtos em estoque</h2><p>Gerencie os itens armazenados no depósito.</p></div><button class="button button-outline" id="export-csv">↧ <span>Exportar</span></button></div>
+      <div class="toolbar"><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Buscar produto..." aria-label="Buscar produto"></label><select id="category-filter" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option><option>Carnes bovinas</option><option>Carnes suínas</option><option>Aves</option><option>Embutidos</option><option>Outros</option></select><select id="stock-filter" aria-label="Filtrar por situação"><option value="">Todas as situações</option><option value="low">Estoque baixo</option><option value="ok">Estoque normal</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>PRODUTO</th><th>CATEGORIA</th><th>QUANTIDADE</th><th>CUSTO / UN.</th><th>VALIDADE</th><th>SITUAÇÃO</th><th></th></tr></thead><tbody id="product-list"></tbody></table><div class="empty hidden" id="empty-state"><span>▤</span><strong>Nenhum produto encontrado</strong><p>Cadastre um produto ou ajuste os filtros.</p></div></div>
+      <div class="table-foot"><span id="result-count">0 produtos</span><span>Os dados ficam salvos neste navegador.</span></div>
+    </section>
+    <section class="content-card movements-card" id="movimentacoes"><div class="section-head"><div><h2>Últimas movimentações</h2><p>Entradas e saídas registradas recentemente.</p></div></div><div class="movement-list" id="movement-list"></div></section>
+    <footer>© 2026 Açougue do Bairro <span>Controle simples, estoque em dia.</span></footer>
+  </main>
+  <dialog id="product-dialog"><form id="product-form"><div class="modal-head"><div><p class="eyebrow">CADASTRO DE ESTOQUE</p><h2 id="modal-title">Novo produto</h2></div><button type="button" class="close-button" data-close aria-label="Fechar">×</button></div><input type="hidden" id="product-id"><div class="form-grid"><label class="wide">Nome do produto<input id="product-name" required maxlength="60" placeholder="Ex.: Alcatra bovina"></label><label>Categoria<select id="product-category" required><option value="">Selecione</option><option>Carnes bovinas</option><option>Carnes suínas</option><option>Aves</option><option>Embutidos</option><option>Outros</option></select></label><label>Unidade<select id="product-unit"><option value="kg">Quilograma (kg)</option><option value="un">Unidade (un)</option><option value="cx">Caixa (cx)</option></select></label><label>Quantidade atual<input id="product-quantity" type="number" min="0" step="0.01" required placeholder="0"></label><label>Estoque mínimo<input id="product-minimum" type="number" min="0" step="0.01" required placeholder="0"></label><label>Custo por unidade (R$)<input id="product-cost" type="number" min="0" step="0.01" required placeholder="0,00"></label><label>Validade<input id="product-expiry" type="date"></label></div><p class="form-error hidden" id="form-error"></p><div class="modal-actions"><button type="button" class="button button-outline" data-close>Cancelar</button><button class="button button-primary" type="submit">Salvar produto</button></div></form></dialog>
+  <dialog id="movement-dialog"><form id="movement-form"><div class="modal-head"><div><p class="eyebrow">CONTROLE DE ESTOQUE</p><h2>Registrar movimentação</h2></div><button type="button" class="close-button" data-close aria-label="Fechar">×</button></div><label>Produto<select id="movement-product" required></select></label><div class="form-grid"><label>Tipo<select id="movement-type"><option value="entrada">Entrada</option><option value="saida">Saída</option></select></label><label>Quantidade<input id="movement-quantity" type="number" min="0.01" step="0.01" required placeholder="0"></label></div><label>Observação<input id="movement-note" maxlength="80" placeholder="Ex.: Compra do fornecedor"></label><p class="form-error hidden" id="movement-error"></p><div class="modal-actions"><button type="button" class="button button-outline" data-close>Cancelar</button><button class="button button-primary" type="submit">Registrar</button></div></form></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
